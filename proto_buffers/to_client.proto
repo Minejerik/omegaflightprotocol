@@ -1,0 +1,40 @@
+syntax = "proto2";
+
+package omegaflightserver;
+
+message Mode {
+	enum ModeType {
+		MANUAL = 1;
+		AUTOMATIC = 2;
+	}
+	required ModeType type = 1;
+}
+
+message QueueMission {
+    // Only used in automatic mode.
+    // Sets, that after take off, this mission should be flown
+	required MissionIndex index = 1;
+}
+
+message CreateNewMission {
+	required Mission mission = 1;
+}
+
+message GoTo {
+    // Only used in manual mode.
+    // Might be replaced w/ just using waypoints, unknown as of now.
+	required Location loc = 1;
+	optional Action action = 2;
+}
+
+message SetHome {
+	required Location loc = 1;
+}
+
+message Land {
+	enum LandType {
+		HOME = 1;
+		NOW = 2;
+	}
+	required LandType type = 1;
+}

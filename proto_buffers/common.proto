@@ -1,0 +1,64 @@
+syntax = "proto2";
+
+// I know "required" is deprecated, but in this scenario, it makes sense.
+// as why should a Location message be accepted, if it is missing location data?
+
+package omegaflightcommon;
+
+message Location {
+    // General Lat-Long-Alt location
+	required float lat = 1;
+	required float long = 2;
+	required float alt = 3;
+}
+
+message Waypoint {
+    // Waypoint, used by Mission
+	required int32 index = 1;
+	optional string name = 2;
+	required Location loc = 3;
+	optional Action action = 4;
+}
+
+message WaypointIndex {
+    // Used to communicated the index of a waypoint in a mission, working on better solution
+	required int32 index = 1;
+	optional string name = 2;
+}
+
+message Action {
+	optional string name = 1;
+	
+	enum ActionType {
+		PIN_TRIGGER = 1;
+		SEND_ALERT = 2;
+		LAND_HERE = 3;
+		LAND_HOME = 4;
+		SLEEP = 5;
+	}
+	
+	required ActionType type = 2;
+	optional int32 pin = 3;
+	optional int32 sleep_time = 4;
+}
+	
+message Mission {
+	repeated Waypoint waypoints = 1;
+	optional string name = 2;
+}
+	
+message MissionIndex {
+	required int32 index = 1;
+	optional string name = 2;
+}
+
+message Command {
+    // Just used a general "Command", take off, land, etc..
+    // Used when data is not required to be sent
+    enum CommandType {
+        TAKE_OFF = 1;
+        // "LAND" types are only to be used during "manual mode" of operation 
+        LAND_HERE = 2;
+        LAND_HOME = 3;
+    }
+}

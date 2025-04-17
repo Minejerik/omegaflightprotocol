@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package omegaflightclient;
+
+message Status {
+	required Location loc = 1;
+    // May not be used, may be removed/replaced
+    optional float battery_voltage = 2;
+}
+
+message Alert{
+	required Location loc = 1;
+	
+	enum AlertType {
+		// Emergency/urgent (no text)
+		DISCONNECT = 1;
+		BATTERY_LOW = 2;
+		LANDING_EMERGENCY = 3;
+		CRASHING = 4
+		
+		// Important/non urgent (can have text)
+		LANDED = 5;
+		ACTION_COMPLETED = 6;
+		WAYPOINT_REACHED = 7;
+		TAKING_OFF = 8;
+		
+		// Other/miscellaneous alert (must have text)
+		OTHER = 15;
+	}
+	
+	required AlertType type = 2;
+	optional string msg = 3;
+}
+
+// Only used to transfer saved mission data, on the client
+// Might be removed in future updates, be warned
+message MissionIndexTransfer {
+	repeated MissionIndex indexes = 1;
+}
+
+message ReachedWaypoint {
+	required WaypointIndex index = 1;
+	required MissionIndex mission = 2; 
+}
