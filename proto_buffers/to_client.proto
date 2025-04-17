@@ -5,13 +5,13 @@ package omegaflightserver;
 message Mode {
 	enum ModeType {
 		MANUAL = 1;
-		AUTOMATIC = 2;
+		MISSION = 2;
 	}
 	required ModeType type = 1;
 }
 
 message QueueMission {
-    // Only used in automatic mode.
+    // Only used in mission mode.
     // Sets, that after take off, this mission should be flown
 	required MissionIndex index = 1;
 }

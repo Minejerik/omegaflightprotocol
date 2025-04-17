@@ -56,9 +56,29 @@ message Command {
     // Just used a general "Command", take off, land, etc..
     // Used when data is not required to be sent
     enum CommandType {
+        // "TAKE_OFF" has different behaviour based on mode,
+        // in manual, just takes off to hard-coded altitude AGL, 20 ft for example
+        // in mission-mode, will start the mission, if queued, if not, will return error message
         TAKE_OFF = 1;
+
         // "LAND" types are only to be used during "manual mode" of operation 
         LAND_HERE = 2;
         LAND_HOME = 3;
     }
+
+    required CommandType cmd = 1;
+}
+
+message Error {
+    // General error, can be sent by client or server
+    // But mostly will be sent by client due to breach of required behaviour
+    enum ErrorType {
+        // Mission-mode errors
+        NO_MISSION_QUEUED = 1;
+        MISSION_DOESNT_EXIST = 2;
+        // General errors
+        NO_HOME_SET = 3;
+    }
+
+    required ErrorType err = 1;
 }
