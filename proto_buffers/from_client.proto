@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package omegaflightclient;
+package offromclient;
 
 message Status {
 	required Location loc = 1;

@@ -1,8 +1,8 @@
 syntax = "proto2";
 
-package omegaflightserver;
+package oftoclient;
 
-message Mode {
+message SetMode {
 	enum ModeType {
 		MANUAL = 1;
 		MISSION = 2;

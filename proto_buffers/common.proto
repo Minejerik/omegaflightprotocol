@@ -3,7 +3,7 @@ syntax = "proto2";
 // I know "required" is deprecated, but in this scenario, it makes sense.
 // as why should a Location message be accepted, if it is missing location data?
 
-package omegaflightcommon;
+package ofcommon;
 
 message Location {
     // General Lat-Long-Alt location
@@ -72,6 +72,7 @@ message Command {
 message Error {
     // General error, can be sent by client or server
     // But mostly will be sent by client due to breach of required behaviour
+    // Depending on error type, it can be sent to user, or dealt with by server, or both
     enum ErrorType {
         // Mission-mode errors
         NO_MISSION_QUEUED = 1;
