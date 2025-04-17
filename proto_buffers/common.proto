@@ -27,17 +27,24 @@ message WaypointIndex {
 }
 
 message Action {
-	optional string name = 1;
-	
+    // This represents an action that is performed after a waypoint is reached.
+	// name will probably not be used in stock OF
+    optional string name = 1;
+
 	enum ActionType {
+        // Triggers a GPIO pin, on the client pilot computer
 		PIN_TRIGGER = 1;
+        // Sends an alert back to the server
 		SEND_ALERT = 2;
+        // Tells the client to either land here, or back at set home location
 		LAND_HERE = 3;
 		LAND_HOME = 4;
+        // Just stays still for n seconds
 		SLEEP = 5;
 	}
 	
 	required ActionType type = 2;
+    // These are only used for specific action types
 	optional int32 pin = 3;
 	optional int32 sleep_time = 4;
 }

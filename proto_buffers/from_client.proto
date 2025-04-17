@@ -3,12 +3,14 @@ syntax = "proto2";
 package offromclient;
 
 message Status {
+	// in docs
 	required Location loc = 1;
     // May not be used, may be removed/replaced
     optional float battery_voltage = 2;
 }
 
-message Alert{
+message Alert {
+	// in docs
 	required Location loc = 1;
 	
 	enum AlertType {
@@ -39,6 +41,8 @@ message MissionIndexTransfer {
 }
 
 message ReachedWaypoint {
+	// This was created due to the issue of needing to send data, not just a generic alert.
+	// This data can be used for UI updates, server side.
 	required WaypointIndex index = 1;
 	required MissionIndex mission = 2; 
 }
