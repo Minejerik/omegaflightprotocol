@@ -3,14 +3,12 @@ syntax = "proto2";
 package offromclient;
 
 message Status {
-	// in docs
 	required Location loc = 1;
     // May not be used, may be removed/replaced
     optional float battery_voltage = 2;
 }
 
 message Alert {
-	// in docs
 	required Location loc = 1;
 	
 	enum AlertType {
@@ -23,8 +21,7 @@ message Alert {
 		// Important/non urgent (can have text)
 		LANDED = 5;
 		ACTION_COMPLETED = 6;
-		WAYPOINT_REACHED = 7;
-		TAKING_OFF = 8;
+		TAKING_OFF = 7;
 		
 		// Other/miscellaneous alert (must have text)
 		OTHER = 15;

@@ -145,7 +145,34 @@ If the type is `TAKE_OFF`, check if there are any active flight blockers, and if
 If the type is `LAND_HERE`, tell the flight controller to land at the current location, and once touched-down, send back a `offromclient.Alert` with `AlertType` of `LANDED`. If the type is `LAND_HOME`, tell the flight controller to land at the home position, also send an alert of landed once touched down.
 If the type is `MISSION_INDEX_DATA`, gather all of the mission indices from cache/storage, and send them in a `offromclient.MissionIndexTransfer` message to the server.
 
+#### Client Messages (sent)
 
+##### `offromclient.Status`
+This is a generic status message, it contains the current location of the client, and, as of now, the battery voltage of the client. This is used by the server to update the UI & add more logging data.
+
+##### `offromclient.Alert`
+This may be split into two messages, but as of the current version, it is a single message.
+This should be sent anytime one of the alert types occurs, such as a flight controller disconnect, low battery, emergency landing, or a crash. It is also used to communicate non-negative alerts, such as landing or a completed action. The negative messages may be split off into a `Fault` message, but as of now, they are part of `Alert`. 
+A location is required, so that the server can log, or update the UI with this information, it also can have a message, this is optional for non-urgent alerts, and required for misc alerts, in order to provide information to the server and user.
+
+##### `offromclient.MissionIndexTransfer`
+This message is used to transfer the cached/saved missions to the server, in the form of a list of `MissionIndex` messages. This may change in the future, but for the current protocol version, it is used.
+When the client receives an `ofcommon.Command` w/ `CommandType` of `MISSION_INDEX_DATA`, it should send this in return.
+
+##### `offromclient.ReachedWaypoint`
+This message is a specific alert for reaching a waypoint, the reason it is not part of the `Alert` message is due to the fact that it requires bespoke data, that no other alert requires.
+
+##### `ofcommon.Error`
+This is used to alert the server of a behaviour fault, it is in common, as the server may be able to send this in a future protocol version, in order to inform the client of protocol violation.
+The message contains an `ErrorType` which contains the exact type of error that happened. This message is only used as a response, after a behaviour-violating message was sent to the client. It is used to log or update the UI, the server may be able to fix the error itself, but it should still update the user on what is occurring.
+
+##### raw-text
+THIS SHOULD ONLY BE SENT IN A WORST-CASE SCENARIO!!
+The server will treat this as a high-severity `Alert`, with the text being used as the body for the alert.
+This should only be sent if there is something actively going catastrophically wrong on the client-side.
+Once this is sent, the server will stop expecting any updates.
+This should only really be used when an irrecoverable fault occurs, and if it is possible, the client should tell the flight controller to land either at home, or at the current location. 
+In normal operation, this should never be needed.
 
 #### Procedures
 
