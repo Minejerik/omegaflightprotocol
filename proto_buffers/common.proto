@@ -14,10 +14,12 @@ message Location {
 
 message Waypoint {
     // Waypoint, used by Mission
-	required int32 index = 1;
-	optional string name = 2;
-	required Location loc = 3;
-	optional Action action = 4;
+    // Index is not required, as the order sent will be preserved
+	// required int32 index = 1;
+    // Waypoint's can no longer have names, as that is extra data that needs to be sent.
+	// optional string name = 2;
+	required Location loc = 1;
+	optional Action action = 2;
 }
 
 message WaypointIndex {
@@ -50,13 +52,18 @@ message Action {
 }
 	
 message Mission {
+    // The index is just the "ID" of the mission
 	repeated Waypoint waypoints = 1;
-	optional string name = 2;
+    required int32 index = 2;
+    // Missions are no longer allowed to have a name on the client side
+    // Server may keep names for UI purposes
+	// optional string name = 2;
 }
 	
 message MissionIndex {
+    // Just the "ID" for the mission, used to communicate which missions are cached.
 	required int32 index = 1;
-	optional string name = 2;
+	// optional string name = 2;
 }
 
 message Command {

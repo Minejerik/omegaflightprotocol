@@ -174,6 +174,10 @@ Once this is sent, the server will stop expecting any updates.
 This should only really be used when an irrecoverable fault occurs, and if it is possible, the client should tell the flight controller to land either at home, or at the current location. 
 In normal operation, this should never be needed.
 
+#### Common Messages
+Most of these messages are used types in other messages, they are not to be sent raw.
+
+
 #### Procedures
 
 These are full actions that are done, like taking off, these go into less detail, but explain how a full actions should be done.
