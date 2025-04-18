@@ -44,7 +44,8 @@ Also all enum options should be all upper case.
 
 More info for each message can be found in the comments inside of the message.
 This is mostly how a client or server should handle every possible procedure or message.
-Stock OF will use theses procedures to the tee.
+All the information is how stock OF will be using these messages & procedures.
+Any client or server that wishes to have compatibility with stock OF, should follow these procedures.
 
 #### Server Messages (received)
 
@@ -54,17 +55,54 @@ How the sever should handle received messages.
 This message from the client is just a generic status message, sent every n time steps.
 This should be used to update the server's information about the client, which should be used to update the UI.
 
-#### `offromclient.Alert`
+##### `offromclient.Alert`
 This message is an alert from the client, it contains the location and alert type.
 Based on the alert type, seen in the comments in the file, a certain severity of notification should be sent to the UI/user.
 It may contain a message, based on the alert type, the server can show the message no matter the type, but the client should not sent a message for certain types of alert, and can be assumed, in stock OF, that it won't send one. 
 The location included can be shown on a map, if one is included in the UI, but it can also just be used for logging purposes.
 
-#### `offromclient.MissionIndexTransfer`
+##### `offromclient.MissionIndexTransfer`
 This is a transfer of all of the saved messages on the client, it contains just a list of mission indices.
-May be removed/deprecated in the future, but as of now, is the method of sharing missions on the client
+May be removed/deprecated in the future, but as of now, is the method of sharing missions on the client, it is requested by sending `ofcommon.Command` w/ the `CommandType` set as `MISSION_INDEX_DATA`
 
-#### `offromclient.ReachedWaypoint`
+##### `offromclient.ReachedWaypoint`
+This contains the mission and waypoint index of the waypoint just reached, can be used for updating UI.
+
+##### `ofcommon.Error`
+This is only being sent by the client, but may be sent by the server in the future, that is why it is in common.
+This contains an error, this is like `offromclient.Alert` but is more specific towards errors, containing an enum of possible errors.
+This can be shown to the user, but is not required, as it is possible to fix some of the errors automatically on the server side, it is still a good idea to at least inform the user that an error did occur though, and it should be added to a log file.
+
+##### raw-text
+In the case that raw text, as in, a message that is not a protobuffer is sent, it should be treated as an alert of top severity. This was created so that the serialization can be skipped, in case of emergency.
+Once a raw-text message is sent, regular updates from the client should not be expected, as a major issue may have occurred.
+
+#### Server Messages (sent)
+
+How the server should send messages.
+
+##### `oftoclient.SetMode`
+This message is used to set the mode of the client, either manual or mission mode.
+It contains only a single enum, which contains the mode type.
+This needs to be set before a flight takes places, in order to setup correct behaviour from client
+
+##### `oftoclient.QueueMission`
+This is needed to tell the client which mission should be executed, this needs to be sent before taking off when in mission mode.
+It requires the mission index, which can be obtained by requesting all saved mission data from the client
+
+##### `oftoclient.TransferMissionData`
+This is sent to the client w/ a mission, used to transfer data about a mission to the client, contains only a mission message.
+
+##### `oftoclient.GoTo`
+May be replaced in the future w/ waypoints, but is currently used to tell the client where to fly while in manual mode.
+It requires a location and an action, the action is optional, but will be able to set in stock OF.
+
+##### `oftoclient.SetHome`
+IMPORTANT, needs to be set before mode is even set, this tells the client where to land if all goes wrong.
+This just requires a location for the home inside of the message.
+
+##### `ofcommon.Command`
+This may end up being used by both client and server in the future, but is currently only being used by the sever to command the client. It requires just a type, information about what each type of command is given in the comments around the message.
 
 #### Procedures
 

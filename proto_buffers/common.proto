@@ -62,6 +62,8 @@ message MissionIndex {
 message Command {
     // Just used a general "Command", take off, land, etc..
     // Used when data is not required to be sent
+    // Currently only being used by client to server, but may be expanded to both, 
+    // hence the inclusion in the common protocol.
     enum CommandType {
         // "TAKE_OFF" has different behaviour based on mode,
         // in manual, just takes off to hard-coded altitude AGL, 20 ft for example
@@ -71,6 +73,9 @@ message Command {
         // "LAND" types are only to be used during "manual mode" of operation 
         LAND_HERE = 2;
         LAND_HOME = 3;
+
+        // Used to get mission index data from client
+        MISSION_INDEX_DATA = 4;
     }
 
     required CommandType cmd = 1;
@@ -79,6 +84,7 @@ message Command {
 message Error {
     // General error, can be sent by client or server
     // But mostly will be sent by client due to breach of required behaviour
+    // In the future the server might send as well, thus warrenting inclusion the common file
     // Depending on error type, it can be sent to user, or dealt with by server, or both
     enum ErrorType {
         // Mission-mode errors

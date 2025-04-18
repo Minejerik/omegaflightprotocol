@@ -36,6 +36,7 @@ message Alert {
 
 // Only used to transfer saved mission data, on the client
 // Might be removed in future updates, be warned
+// Triggered by ofcommon.Command w/ CommandType set as MISSION_INDEX_DATA
 message MissionIndexTransfer {
 	repeated MissionIndex indexes = 1;
 }

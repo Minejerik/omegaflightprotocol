@@ -3,6 +3,7 @@ syntax = "proto2";
 package oftoclient;
 
 message SetMode {
+	// Used to set client mode
 	enum ModeType {
 		MANUAL = 1;
 		MISSION = 2;
@@ -16,7 +17,7 @@ message QueueMission {
 	required MissionIndex index = 1;
 }
 
-message CreateNewMission {
+message TransferMissionData {
 	required Mission mission = 1;
 }
 
@@ -28,13 +29,7 @@ message GoTo {
 }
 
 message SetHome {
+	// Sets the location of the client's home,
+	// Required to fly
 	required Location loc = 1;
-}
-
-message Land {
-	enum LandType {
-		HOME = 1;
-		NOW = 2;
-	}
-	required LandType type = 1;
 }
