@@ -203,8 +203,8 @@ See client & server behaviour.
 Just used to represent an error, mostly behaviour errors, but can also be protocol errors. 
 
 #### Procedures
-
 These are full actions that are done, like taking off, these go into less detail, but explain how a full actions should be done.
+Examples are better for full examples of how something happens
 
 ##### Take off procedure (manual mode)
 This is how take off is triggered in manual mode, it should be trigger by pressing a "Take Off" button on the manual control area of the server's user interface.
@@ -215,3 +215,85 @@ This is how take off is triggered in manual mode, it should be trigger by pressi
 ##### Goto location (manual)
 This is how movement is done inside of manual mode, this may be changed later. But currently this is used.
 This should be sent when the user inputs a location on the user interface while in manual mode.
+
+
+#### Examples
+These are full, simple, flights, which show the protocol messages sent.
+
+##### Simple Mission Flight
+This example creates, and sends a simple mission, which is then flown by the client.
+
+- The server sends `oftoclient.SetHome`, with an `ofcommon.Location` set to the home position
+    -   The client must note down the home position
+    -   The client must also send the home position to the flight controller
+    -   And the client must remove the flight blocker due to not having a home position
+- The server sends `oftoclient.SetMode`, with `ModeType` of `MISSION`
+    -   This is noted by the client, to change behaviour
+    -   Also the client must remove the flight blocker due to not having a mode
+- The server sends `oftoclient.TransferMissionData`
+    -   The mission is setup as this:
+        -   Waypoint 1, location set to point A, at set altitude
+            -   No Action, just first position
+            -   Should be above/near home position
+        -   Waypoint 2, location set to point B, at set altitude
+            -   Action should be of type `LAND_HERE`
+            -   Once waypoint is reached, client will land
+        -   Index
+            -   Can be set to any unsigned 32-bit int
+            -   For this example will be `42`
+    -   Once client receives this message
+        -   The mission should be added to the mission cache/storage on client
+- The server sends `oftoclient.QueueMission`
+    -   The `MissionIndex` should contain the index of the mission
+        -   In this case it should be `42`
+    -   Once the client receives this, it should:
+        -   Make a note of the mission to be flown
+        -   Load the first waypoint into memory, so it knows where to go when to fly
+        -   Remove the flight blocker due to not having a queued mission
+- The server sends `ofcommon.Command`
+    -   The `CommandType` should be `TAKE_OFF`
+    -   The Client Should:
+        -   Verify that no flight blockers are in place
+            -   If there are ones, send back an `ofcommon.Error`
+                -   With `ErrorType` corresponding to the error.
+        -   If no flight blockers exist, tell the flight controller to take off
+            -   And tell the flight controller the destination of the first waypoint (Point A)
+            -   It should also update the current flight status to flying
+- The client sends `offromclient.Alert`
+    -   With `AlertType` of `TAKING_OFF`, and no message
+    -   The server should update its logs, and update the UI.
+    -   The server should update its current client flight status to flying
+- The client sends an `offromclient.Status` Message
+    -   It should contain the current location of the client
+    -   The server should update its logs, and update the UI with this information.
+    -   This should be sent every n seconds
+- The client reaches Waypoint 1
+    -   It should send an `offromclient.ReachedWaypoint` message
+        -   `WaypointIndex` would be `0`
+            -   As it is the first waypoint in the mission
+        -   `MissionIndex` should be `42`
+            -   As that is the index of the mission
+    -   Server should update its UI with this information, and log it.
+    -   The client should wait a few seconds
+        -   Before telling the flight controller to fly towards waypoint 2 (Point B)
+- The client should send an `offromclient.Status` Message
+    -   See above for more info
+- The client reaches Waypoint 2
+    -   It should send an `offromclient.ReachedWaypoint` message
+        -   `WaypointIndex` would be `1`
+            -   As it is the second waypoint in the mission
+        -   `MissionIndex` should be `42`
+            -   As that is the index of the mission
+    -   Server should update its UI with this info, aswell as logging it
+    -   The client should wait a few seconds
+        -   Due to the waypoint having an action, it should perform that action
+            -   In this case the action has a type of `LAND_HERE`
+            -   The client should tell the flight controller to land here
+- Once the client lands
+    -   It should send an `offromclient.Alert`
+        -   `AlertType` should be `LANDED`
+        -   The client should update its current flight status to landed
+        -   Once the server receives this, it should do the same.
+        -   The server should update its logs, and its UI.
+
+    
