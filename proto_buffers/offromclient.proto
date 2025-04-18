@@ -2,8 +2,10 @@ syntax = "proto2";
 
 package offromclient;
 
+import "ofcommon.proto";
+
 message Status {
-	required Location loc = 1;
+	required ofcommon.Location loc = 1;
     // May not be used, may be removed/replaced
     optional float battery_voltage = 2;
 }
@@ -35,12 +37,12 @@ message Alert {
 // Might be removed in future updates, be warned
 // Triggered by ofcommon.Command w/ CommandType set as MISSION_INDEX_DATA
 message MissionIndexTransfer {
-	repeated MissionIndex indexes = 1;
+	repeated ofcommon.MissionIndex indexes = 1;
 }
 
 message ReachedWaypoint {
 	// This was created due to the issue of needing to send data, not just a generic alert.
 	// This data can be used for UI updates, server side.
-	required WaypointIndex index = 1;
-	required MissionIndex mission = 2; 
+	required ofcommon.WaypointIndex index = 1;
+	required ofcommon.MissionIndex mission = 2; 
 }

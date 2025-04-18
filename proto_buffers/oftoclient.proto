@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package oftoclient;
 
+import "ofcommon.proto";
+
 message SetMode {
 	// Used to set client mode
 	enum ModeType {
@@ -14,22 +16,22 @@ message SetMode {
 message QueueMission {
     // Only used in mission mode.
     // Sets, that after take off, this mission should be flown
-	required MissionIndex index = 1;
+	required ofcommon.MissionIndex index = 1;
 }
 
 message TransferMissionData {
-	required Mission mission = 1;
+	required ofcommon.Mission mission = 1;
 }
 
 message GoTo {
     // Only used in manual mode.
     // Might be replaced w/ just using waypoints, unknown as of now.
-	required Location loc = 1;
-	optional Action action = 2;
+	required ofcommon.Location loc = 1;
+	optional ofcommon.Action action = 2;
 }
 
 message SetHome {
 	// Sets the location of the client's home,
 	// Required to fly
-	required Location loc = 1;
+	required ofcommon.Location loc = 1;
 }
