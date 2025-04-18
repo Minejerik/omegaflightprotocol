@@ -296,4 +296,60 @@ This example creates, and sends a simple mission, which is then flown by the cli
         -   Once the server receives this, it should do the same.
         -   The server should update its logs, and its UI.
 
-    
+##### Simple Manual Flight
+This is a simple manual flight, the beginning is very similar to the mission mode flight
+In this example landing will happen through a command, not an action.
+
+- The server sends `oftoclient.SetHome`, with an `ofcommon.Location` set to the home position
+    -   The client must note down the home position
+    -   The client must also send the home position to the flight controller
+    -   And the client must remove the flight blocker due to not having a home position
+- The server sends `oftoclient.SetMode`, with `ModeType` of `MANUAL`
+    -   This is noted by the client, to change behaviour
+    -   Also the client must remove the flight blocker due to not having a mode
+        -   Due to being in manual mode, the flight blocker for an unqueued mission does not apply, and should not be added
+- The server sends `ofcommon.Command`
+    -   The `CommandType` should be `TAKE_OFF`
+    -   The Client Should:
+        -   Verify that no flight blockers are in place
+            -   If there are ones, send back an `ofcommon.Error`
+                -   With `ErrorType` corresponding to the error.
+        -   If no flight blockers exist
+            -   The client should tell the flight controller to fly to a set height AGL
+                -   This height should be in the config for the client
+            -   It should also update the current flight status to flying
+- The client sends `offromclient.Alert`
+    -   With `AlertType` of `TAKING_OFF`, and no message
+    -   The server should update its logs, and update the UI.
+    -   The server should update its current client flight status to flying
+- The client sends an `offromclient.Status` Message
+    -   It should contain the current location of the client
+    -   The server should update its logs, and update the UI with this information.
+    -   This should be sent every n seconds
+- The server sends an `oftoclient.GoTo`
+    -   It contains the location of where the client should go
+    -   It can also contain an action
+        -   This is another way landing could occur
+            -   With an `Action` of type `LAND_HERE`
+            -   In this example, a `Command` will be used, instead of this.
+            -   But this could work aswell, allowing the user to program in a command
+            -   To land once the waypoint is reached, instead of making the user land manually
+    -   The client should tell the flight controller to start flying towards this location
+- The client sends an `offromclient.Status` Message
+    -   It should contain the current location of the client
+    -   The server should update its logs, and update the UI with this information.
+- The client reaches the location
+    -   It should wait until a new `GoTo` message is sent
+        -   Or a `Command` with a `CommandType` of land
+    -   If an action is added, it should wait a few seconds, before performing the action
+- The server sends an `ofcommon.Command`
+    -   The `CommandType` should be `LAND_HERE`
+    -   This will trigger the landing for the client
+    -   The client should
+        -   Tell the flight controller to land here
+- Once the client lands
+    -   It should send an `offromclient.Alert`
+        -   `AlertType` should be `LANDED`
+        -   The client should update its current flight status to landed
+        -   Once the server receives this, it should do the same.
+        -   The server should update its logs, and its UI.
