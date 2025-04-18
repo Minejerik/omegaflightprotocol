@@ -3,6 +3,14 @@ The protocol used by Omegaflight.
 
 ### A lot of documentation already exists with in the protocol buffer files, look in `proto_buffers` for info
 
+
+#### Basic behaviour
+The client needs to have a list of `flight blockers`, which are conditions that are currently not set correctly, which are blocking take off.
+This list needs to be maintained, and is required to make sure that every single thing is ready for flight.
+This is a REQUIRED piece of client behaviour, and in order to make sure that compatibility with all other Omegaflight servers is maintained, this must be added. 
+TODO: added messages to share blockers w/ server.
+The server should be able to check this list of blockers, and if it does not make sense, as in, home is not set, but a blocker for a lack of home has not been added, the server should block flight, until a client sending a valid blocker list is connected.
+
 #### Basic Ideas
 All message-types are split into 3 seconds, common, from-client, and to-client.
 Common message-types are used by both to & from client messages.
@@ -13,6 +21,8 @@ These have there own package names:
 - `from_client.proto` -> `offromclient`
 
 (the of is short for Omegaflight)
+
+Every single action, that has a check, such as making sure that a home is set before take off, should be confirmed on both the client on server, just to be sure.
 
 Nearly all communication, except for extreme circumstances, will take place over protobuffers,
 as they are fast, and efficient, to transfer. 
