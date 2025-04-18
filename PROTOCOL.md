@@ -6,10 +6,6 @@ The protocol used by Omegaflight.
 
 #### Basic behaviour
 The client needs to have a list of `flight blockers`, which are conditions that are currently not set correctly, which are blocking take off.
-This list needs to be maintained, and is required to make sure that every single thing is ready for flight.
-This is a REQUIRED piece of client behaviour, and in order to make sure that compatibility with all other Omegaflight servers is maintained, this must be added. 
-TODO: added messages to share blockers w/ server.
-The server should be able to check this list of blockers, and if it does not make sense, as in, home is not set, but a blocker for a lack of home has not been added, the server should block flight, until a client sending a valid blocker list is connected.
 
 #### Basic Ideas
 All message-types are split into 3 seconds, common, from-client, and to-client.
@@ -177,6 +173,34 @@ In normal operation, this should never be needed.
 #### Common Messages
 Most of these messages are used types in other messages, they are not to be sent raw.
 
+##### `ofcommon.Location`
+Generic location message, contains lat, long, and altitude.
+Altitude is in feet.
+
+##### `ofcommon.Waypoint`
+A waypoint used in mission mode, used as part of a `Mission` message, contains a location, and a possible action to be performed at that waypoint.
+
+##### `ofcommon.WaypointIndex`
+Used to index waypoints as part of a `Mission` message, it just contains the index of the waypoint in the list of waypoints inside of a mission.
+
+##### `ofcommon.Action`
+This represent an action to be performed at a waypoint, once it is reached. 
+It contains an `ActionType` enum, it also contains pin number and sleep time attributes, which are used for the `PIN_TRIGGER` and `SLEEP` action types respectively.
+
+##### `ofcommon.Mission`
+Represents a mission for the client to perform during mission mode.
+It contains a list of waypoints, as well as an index, this index is used mostly as an ID for that specific mission. This index does not need to be incremental, and can be any number to the 32-bit integer limit.
+
+##### `ofcommon.MissionIndex`
+This message just contains the index of a mission, it used to communicate saved/cached missions to the server.
+
+##### `ofcommon.Command`
+See client & server behaviour.
+Represents a command, that the receiver must carry out.
+
+##### `ofcommon.Error`
+See client & server behaviour.
+Just used to represent an error, mostly behaviour errors, but can also be protocol errors. 
 
 #### Procedures
 

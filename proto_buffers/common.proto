@@ -25,13 +25,11 @@ message Waypoint {
 message WaypointIndex {
     // Used to communicated the index of a waypoint in a mission, working on better solution
 	required int32 index = 1;
-	optional string name = 2;
 }
 
 message Action {
     // This represents an action that is performed after a waypoint is reached.
 	// name will probably not be used in stock OF
-    optional string name = 1;
 
 	enum ActionType {
         // Triggers a GPIO pin, on the client pilot computer
@@ -45,10 +43,10 @@ message Action {
 		SLEEP = 5;
 	}
 	
-	required ActionType type = 2;
+	required ActionType type = 1;
     // These are only used for specific action types
-	optional int32 pin = 3;
-	optional int32 sleep_time = 4;
+	optional int32 pin = 2;
+	optional int32 sleep_time = 3;
 }
 	
 message Mission {
