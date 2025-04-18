@@ -128,6 +128,7 @@ The mission should be loaded from mission cache/storage, based on index, ignore 
 ##### `oftoclient.TransferMissionData`
 This is the server sending a new mission to the client, it contains the mission, which contains a list of waypoints for the client to go to.
 The new mission should be saved to mission storage/cache, it could be saved as a binary file, as a raw protobuf, and then the filename added to a database. That works but other solutions can be used.
+If the mission has the same index as another, it should replace that one, if the mission contains no waypoints, the client should delete that mission
 
 ##### `oftoclient.GoTo`
 First make sure that the current mode is set to manual, it is not, send back `ofcommon.Error` w/ `ErrorType` of `WRONG_MODE`. Make sure that the client is also in flight already, if not, send back `ofcommon.Error` w/ `ErrorType` of `NOT_IN_FLIGHT_CANT_EXECUTE`. Also just make sure that home is set, theoretically it is impossible for the client receive this message, without being in the air or having home set, but it is better to check again. if home is not set, send an error w/ type `NO_HOME_SET`. Once all checks have passed, it is possible to tell the flight controller to fly to the location given, once there, if there is one, perform the action.
