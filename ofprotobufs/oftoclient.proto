@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package oftoclient;
 
-import "ofcommon.proto";
+import "ofprotobufs/ofcommon.proto";
 
 message SetMode {
 	// Used to set client mode

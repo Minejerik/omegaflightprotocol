@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package offromclient;
 
-import "ofcommon.proto";
+import "ofprotobufs/ofcommon.proto";
 
 message Status {
 	required ofcommon.Location loc = 1;
@@ -11,14 +11,14 @@ message Status {
 }
 
 message Alert {
-	required Location loc = 1;
+	required ofcommon.Location loc = 1;
 	
 	enum AlertType {
 		// Emergency/urgent (no text)
 		DISCONNECT = 1;
 		BATTERY_LOW = 2;
 		LANDING_EMERGENCY = 3;
-		CRASHING = 4
+		CRASHING = 4;
 		
 		// Important/non urgent (can have text)
 		LANDED = 5;
