@@ -92,6 +92,9 @@ message Error {
         MISSION_DOESNT_EXIST = 2;
         // General errors
         NO_HOME_SET = 3;
+        IN_FLIGHT_CAN_NOT_CHANGE = 4;
+        WRONG_MODE = 5;
+        NOT_IN_FLIGHT_CANT_EXECUTE = 6;
     }
 
     required ErrorType err = 1;

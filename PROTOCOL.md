@@ -104,6 +104,39 @@ This just requires a location for the home inside of the message.
 ##### `ofcommon.Command`
 This may end up being used by both client and server in the future, but is currently only being used by the sever to command the client. It requires just a type, information about what each type of command is given in the comments around the message.
 
+#### Client Messages (received)
+
+This is how the client should react to sent messages from server.
+
+##### `oftoclient.SetMode`
+The client should simply take note of the current operating mode, set from this message.
+Based on the mode, the behaviour of flight should change, will be noted later.
+Should be blocked during flight, send back `ofcommon.Error` w/ `ErrorType` of `IN_FLIGHT_CAN_NOT_CHANGE` if flight mode is set to be changed.
+
+##### `oftoclient.QueueMission`
+The client should use the mission index part of this message, to set the currently used mission.
+If the mission does not exist, send back a `ofcommon.Error` w/ `ErrorType` of `MISSION_DOESNT_EXIST`.
+Make sure to set a flag that the mission has been queued, so that it can be clear that this is not a flight blocker.
+The mission should be loaded from mission cache/storage, based on index, ignore mission name, that is only for UI.
+
+##### `oftoclient.TransferMissionData`
+This is the server sending a new mission to the client, it contains the mission, which contains a list of waypoints for the client to go to.
+The new mission should be saved to mission storage/cache, it could be saved as a binary file, as a raw protobuf, and then the filename added to a database. That works but other solutions can be used.
+
+##### `oftoclient.GoTo`
+First make sure that the current mode is set to manual, it is not, send back `ofcommon.Error` w/ `ErrorType` of `WRONG_MODE`. Make sure that the client is also in flight already, if not, send back `ofcommon.Error` w/ `ErrorType` of `NOT_IN_FLIGHT_CANT_EXECUTE`. Also just make sure that home is set, theoretically it is impossible for the client receive this message, without being in the air or having home set, but it is better to check again. if home is not set, send an error w/ type `NO_HOME_SET`. Once all checks have passed, it is possible to tell the flight controller to fly to the location given, once there, if there is one, perform the action.
+
+##### `oftoclient.SetHome`
+This is to set the home of the client, when received, update the flight controller's home with the one received. Also update the internal home. If the client is currently in flight, send back `ofcommon.Error` w/ `ErrorType` of `IN_FLIGHT_CAN_NOT_CHANGE`. A flag should be set, saying that the home has been set, removing another block from flight.
+
+##### `ofcommon.Command`
+This might end up being also sent by the client, so it is in `ofcommon` instead of `oftoclient`.
+If the type is `TAKE_OFF`, check if there are any active flight blockers, and if there are, send an `Error`  with the appropriate `ErrorType` for the blocker. If the mode is manual, tell the flight controller to rise to a set height AGL, this should be changeable in client config. If the mode is mission, tell the flight controller to start heading towards the first waypoint. If all blockers are removed, and the client starts rising, set a flag saying that the client is currently in flight. Also a `offromclient.Alert` with `AlertType` of `TAKING_OFF` should be sent to the server.
+If the type is `LAND_HERE`, tell the flight controller to land at the current location, and once touched-down, send back a `offromclient.Alert` with `AlertType` of `LANDED`. If the type is `LAND_HOME`, tell the flight controller to land at the home position, also send an alert of landed once touched down.
+If the type is `MISSION_INDEX_DATA`, gather all of the mission indices from cache/storage, and send them in a `offromclient.MissionIndexTransfer` message to the server.
+
+
+
 #### Procedures
 
 These are full actions that are done, like taking off, these go into less detail, but explain how a full actions should be done.
