@@ -11,5 +11,5 @@ The protocol uses `Protocol Buffers` for data seralization, and as a schema, and
 Pre compiled protobufs will be in the releases.
 But to build it yourself use this command:
 ```
-protoc --python_out=./ ./ofprotobufs/offromclient.proto ./ofprotobufs/oftoclient.proto
+protoc --python_out=./temp ./ofprotobufs/offromclient.proto ./ofprotobufs/oftoclient.proto ./ofprotobufs/ofcommon.proto
 ```
