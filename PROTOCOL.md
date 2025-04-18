@@ -202,21 +202,6 @@ Represents a command, that the receiver must carry out.
 See client & server behaviour.
 Just used to represent an error, mostly behaviour errors, but can also be protocol errors. 
 
-#### Procedures
-These are full actions that are done, like taking off, these go into less detail, but explain how a full actions should be done.
-Examples are better for full examples of how something happens
-
-##### Take off procedure (manual mode)
-This is how take off is triggered in manual mode, it should be trigger by pressing a "Take Off" button on the manual control area of the server's user interface.
-- First the home MUST be set, see `oftoclient.SetHome`
-- Set the mode to manual by sending `oftoclient.SetMode` with `ModeType` of `MANUAL`
-- Then just send a `ofcommon.Command` w/ `CommandType` set as `TAKE_OFF`, this will bring the client to a set altitude AGL, based on client config.
-
-##### Goto location (manual)
-This is how movement is done inside of manual mode, this may be changed later. But currently this is used.
-This should be sent when the user inputs a location on the user interface while in manual mode.
-
-
 #### Examples
 These are full, simple, flights, which show the protocol messages sent.
 
