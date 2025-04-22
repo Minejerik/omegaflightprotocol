@@ -1,7 +1,7 @@
 # Omegaflight protocol
 The protocol used by Omegaflight.
 
-### A lot of documentation already exists with in the protocol buffer files, look in `proto_buffers` for info
+### A lot of documentation already exists with in the protocol buffer files, look in `ofprotobufs` for info
 
 
 #### Basic behaviour
@@ -12,9 +12,9 @@ All message-types are split into 3 seconds, common, from-client, and to-client.
 Common message-types are used by both to & from client messages.
 
 These have there own package names:
-- `common.proto` -> `ofcommon`
-- `to_client.proto` -> `oftoclient`
-- `from_client.proto` -> `offromclient`
+- `ofcommon.proto` -> `ofcommon`
+- `oftoclient.proto` -> `oftoclient`
+- `offromclient.proto` -> `offromclient`
 
 (the of is short for Omegaflight)
 

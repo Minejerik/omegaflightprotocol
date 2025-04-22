@@ -35,3 +35,14 @@ message SetHome {
 	// Required to fly
 	required ofcommon.Location loc = 1;
 }
+
+message Discovery {
+	// Used for the server to discover clients
+	required string protocol_version = 1; // Should be x.x.x
+
+	// Contains the name of the server software, used for logging on client side
+	// Similar to a useragent
+	// Should be max ~200 characters long
+	optional string server_name = 2; 
+
+}

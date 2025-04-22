@@ -33,10 +33,10 @@ message Alert {
 	optional string msg = 3;
 }
 
-// Only used to transfer saved mission data, on the client
-// Might be removed in future updates, be warned
-// Triggered by ofcommon.Command w/ CommandType set as MISSION_INDEX_DATA
 message MissionIndexTransfer {
+	// Only used to transfer saved mission data, on the client
+	// Might be removed in future updates, be warned
+	// Triggered by ofcommon.Command w/ CommandType set as MISSION_INDEX_DATA
 	repeated ofcommon.MissionIndex indexes = 1;
 }
 
@@ -45,4 +45,15 @@ message ReachedWaypoint {
 	// This data can be used for UI updates, server side.
 	required ofcommon.WaypointIndex index = 1;
 	required ofcommon.MissionIndex mission = 2; 
+}
+
+message DiscoveryReply {
+	// This is a return to an `oftoclient.Discovery` message
+	// Similar to said message as well
+	required string protocol_version = 1; // Should be x.x.x
+
+	// Contains the name of the client software, used for logging on server side
+	// Similar to a useragent
+	// Should be max ~200 characters long
+	optional string server_name = 2; 
 }
