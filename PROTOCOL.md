@@ -74,6 +74,13 @@ May be removed/deprecated in the future, but as of now, is the method of sharing
 ##### `offromclient.ReachedWaypoint`
 This contains the mission and waypoint index of the waypoint just reached, can be used for updating UI.
 
+##### `offromclient.DiscoveryReply`
+This message contains the protocol version of the client and can contain the name of the client's software.
+The name should be used for logging, and the version should be checked for compatibility.
+The version will be in the x.x.x format, if only the patch is changed, compatibility should work.
+If the minor version is changed, compatibility might work, but a warning should be shown to the user, and a message should be logged.
+If the major version changed, it should not allow flight, showing a full error stating this.
+
 ##### `ofcommon.Error`
 This is only being sent by the client, but may be sent by the server in the future, that is why it is in common.
 This contains an error, this is like `offromclient.Alert` but is more specific towards errors, containing an enum of possible errors.
@@ -107,6 +114,10 @@ It requires a location and an action, the action is optional, but will be able t
 IMPORTANT, needs to be set before mode is even set, this tells the client where to land if all goes wrong.
 This just requires a location for the home inside of the message.
 
+##### `oftoclient.Discovery`
+This message contains the protocol version of the server, and can contain the server's software name.
+It is used to probe for clients, and should be used to verify compatibility.
+
 ##### `ofcommon.Command`
 This may end up being used by both client and server in the future, but is currently only being used by the sever to command the client. It requires just a type, information about what each type of command is given in the comments around the message.
 
@@ -136,6 +147,13 @@ First make sure that the current mode is set to manual, it is not, send back `of
 ##### `oftoclient.SetHome`
 This is to set the home of the client, when received, update the flight controller's home with the one received. Also update the internal home. If the client is currently in flight, send back `ofcommon.Error` w/ `ErrorType` of `IN_FLIGHT_CAN_NOT_CHANGE`. A flag should be set, saying that the home has been set, removing another block from flight.
 
+##### `oftoclient.Discovery`
+This message contains the protocol version of the server, and can contain the server's software name.
+It is used to probe for clients, it should be replied to with a `offromclient.DiscoveryReply`.
+The protocol version should be checked for compatibility.
+If the minor version is changed, compatibility might work, but a warning should be shown to the user, and a message should be logged.
+If the major version changed, it should not allow flight, showing a full error stating this.
+
 ##### `ofcommon.Command`
 This might end up being also sent by the client, so it is in `ofcommon` instead of `oftoclient`.
 If the type is `TAKE_OFF`, check if there are any active flight blockers, and if there are, send an `Error`  with the appropriate `ErrorType` for the blocker. If the mode is manual, tell the flight controller to rise to a set height AGL, this should be changeable in client config. If the mode is mission, tell the flight controller to start heading towards the first waypoint. If all blockers are removed, and the client starts rising, set a flag saying that the client is currently in flight. Also a `offromclient.Alert` with `AlertType` of `TAKING_OFF` should be sent to the server.
@@ -162,6 +180,11 @@ This message is a specific alert for reaching a waypoint, the reason it is not p
 ##### `ofcommon.Error`
 This is used to alert the server of a behaviour fault, it is in common, as the server may be able to send this in a future protocol version, in order to inform the client of protocol violation.
 The message contains an `ErrorType` which contains the exact type of error that happened. This message is only used as a response, after a behaviour-violating message was sent to the client. It is used to log or update the UI, the server may be able to fix the error itself, but it should still update the user on what is occurring.
+
+##### `offromclient.DiscoveryReply`
+This just contains the client's protocol version, and can contain the name of the client's software.
+It used for the server to know if there is a client on the other end. 
+It is also used to verify compatibility between the protocol versions.
 
 ##### raw-text
 THIS SHOULD ONLY BE SENT IN A WORST-CASE SCENARIO!!
